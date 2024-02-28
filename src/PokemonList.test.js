@@ -24,6 +24,6 @@ test('Pagination', () => {
     handlePagination={handlePagination}
     />)
 
-    fireEvent.click(screen.getByTestId('pagination-button'));
+    fireEvent.click(screen.getByText('1'));
     expect(handlePagination).toHaveBeenCalledTimes(1);
 })

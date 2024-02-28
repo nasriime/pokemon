@@ -10,7 +10,6 @@ const Pagination = ({ pokemonsPerPage, length, currentPage, handlePagination }) 
     <div className='pagination'>
       {paginationNumbers.map((pageNumber) => (
         <button
-            data-testid="pagination-button"
             key={pageNumber}
             className={currentPage === pageNumber ? 'active' : ''}
             onClick={()=> handlePagination(pageNumber)}
