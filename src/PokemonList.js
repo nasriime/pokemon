@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import SinglePokemon from './SinglePokemon';
 
 const PokemonList = ()=>{
     const [pokemons, setPokemons] = useState([]);
@@ -22,6 +23,7 @@ const PokemonList = ()=>{
         var storedPokemons = JSON.parse(localStorage.getItem("pokemons"));
 
         if(storedPokemons.length){
+          setPokemons(storedPokemons);
           return;
         }
 
@@ -32,7 +34,7 @@ const PokemonList = ()=>{
         <div>
             {pokemons.map(pokemon=> 
               <div key={pokemon.name}>
-                {pokemon.name}
+                <SinglePokemon name={pokemon.name} /> 
               </div>
               )}
         </div>
