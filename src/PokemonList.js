@@ -5,6 +5,7 @@ import Pagination from './Pagination';
 const PokemonList = ()=> {
     const [pokemons, setPokemons] = useState([]);
     const [filteredPokemons, setFilteredPokemons] = useState([]);
+    const [searchText, setSearchText] = useState('');
     const pokemonsPerPage = 10;
     const [currentPage, setCurrentPage] = useState(1);
     const [checkedPokemons, setCheckedPokemons] = useState([]);
@@ -60,7 +61,8 @@ const PokemonList = ()=> {
         setFilteredPokemons(updatePokemons(currentPage, pokemons))
         return;
       }
-      
+
+      setSearchText(searchTerm);
       const filtered = pokemons.filter(pokemon => pokemon.name.toLowerCase().includes(searchTerm.toLowerCase()));
       setFilteredPokemons(filtered);
     }
@@ -75,8 +77,8 @@ const PokemonList = ()=> {
       
     const toggleChecked = (name)=>{
       let newCheckedPokemon;
-      if(checkedPokemons[name]){
-        newCheckedPokemon = checkedPokemons.filter(pokemon=> pokemon.name !== name);
+      if(checkedPokemons.find(item=> item === name)){
+        newCheckedPokemon = checkedPokemons.filter(item=> item !== name);
         setCheckedPokemons(newCheckedPokemon);
         localStorage.setItem("checkedPokemons", JSON.stringify(newCheckedPokemon));
       }else{
@@ -96,12 +98,13 @@ const PokemonList = ()=> {
               )}
           </ul>
 
-          {filteredPokemons.length > 0 ? <Pagination
+          {!searchText && filteredPokemons.length > 0 && <Pagination
             length={pokemons.length}
             pokemonsPerPage={pokemonsPerPage}
             currentPage={currentPage}
             handlePagination={handlePagination}
-          />: <div>No results found</div>}
+          />} 
+          {searchText && filteredPokemons.length === 0 &&<div>No results found</div>}
         </div>
     )
 }
