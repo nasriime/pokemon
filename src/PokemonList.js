@@ -59,6 +59,7 @@ const PokemonList = ()=> {
       const searchTerm = e.target.value;
       if(!searchTerm) {
         setFilteredPokemons(updatePokemons(currentPage, pokemons))
+        setSearchText('')
         return;
       }
 
