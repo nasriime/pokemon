@@ -7,7 +7,9 @@ test('Triggering search', () => {
   const searchInput = screen.queryByPlaceholderText('Search...')
   
   fireEvent.change(searchInput, { target: { value: 'test' } })
-  expect(searchInput.value).toBe('test') 
+  expect(searchInput).toBeInTheDocument();
+  expect(searchInput.value).toBe('test');
+
 });
 
 
