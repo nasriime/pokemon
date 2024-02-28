@@ -8,61 +8,69 @@ const PokemonList = ()=> {
     const [pokemonsPerPage, setPokemonsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [checkedPokemons, setCheckedPokemons] = useState([]);
+
+
+    const updatePokemons = (currentPage, data)=>{
+      const indexOfLastRecord = currentPage * pokemonsPerPage;
+      const indexOfFirstRecord = indexOfLastRecord - pokemonsPerPage;
+      const currentPokemons = data.slice(indexOfFirstRecord, 
+        indexOfLastRecord);
+
+        return currentPokemons;
+    }
    
-
     const getPokemons = (currentPage, offset=0, limit=20) => {
-        fetch(
-          `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`,
-          )
-          .then(response => response.json())
-          .then(data => {
-            const indexOfLastRecord = currentPage * pokemonsPerPage;
-            const indexOfFirstRecord = indexOfLastRecord - pokemonsPerPage;
-            const currentRecords = data.results.slice(indexOfFirstRecord, 
-              indexOfLastRecord);
+      fetch(
+        `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`,
+        )
+        .then(response => response.json())
+        .then(data => {
+          setFilteredPokemons(updatePokemons(currentPage, data.results));
 
-            setFilteredPokemons(currentRecords);
+          if(pokemons?.length === 0){
             setPokemons(data.results);
             localStorage.setItem("pokemons", JSON.stringify(data.results));
-          })
-          .catch(err => {
-            console.log("error", err);
-          });
-      };
+          }
+        })
+        .catch(err => {
+          console.log("error", err);
+        });
+    }
 
-      useEffect(()=>{
-        var storedPokemons = JSON.parse(localStorage.getItem("pokemons"));
-        var storedCheckedPokemons = JSON.parse(localStorage.getItem("checkedPokemons"));
+    useEffect(()=>{
+      var storedPokemons = JSON.parse(localStorage.getItem("pokemons"));
+      var storedCheckedPokemons = JSON.parse(localStorage.getItem("checkedPokemons"));
 
-        if(storedPokemons.length){
-          setPokemons(storedPokemons);
-          setFilteredPokemons(storedPokemons);
-        } else {
-          getPokemons(currentPage);
-        }
-
-        if(storedCheckedPokemons?.length){
-          setCheckedPokemons(storedCheckedPokemons);
-        } 
-
-      }, [])
-
-      const onSearch = (e)=>{
-        const searchTerm = e.target.value;
-        if(!searchTerm) {
-          setFilteredPokemons(pokemons)
-          return;
-        }
-        
-        const filtered = pokemons.filter(pokemon => pokemon.name.includes(searchTerm));
-        setFilteredPokemons(filtered);
+      if(storedPokemons?.length){
+        setPokemons(storedPokemons);
+        updatePokemons(currentPage, storedPokemons)
+      
+        setFilteredPokemons(updatePokemons(currentPage, storedPokemons));
+      } else {
+        getPokemons(currentPage);
       }
 
-      const handlePagination = (pageNumber) => {
-        setCurrentPage(pageNumber);
-        getPokemons(pageNumber, (pageNumber-1)*pokemonsPerPage);
-      };
+      if(storedCheckedPokemons?.length){
+        setCheckedPokemons(storedCheckedPokemons);
+      } 
 
+    }, []);
+
+    const onSearch = (e)=>{
+      const searchTerm = e.target.value;
+      if(!searchTerm) {
+        setFilteredPokemons(pokemons)
+        return;
+      }
+      
+      const filtered = pokemons.filter(pokemon => pokemon.name.includes(searchTerm));
+      setFilteredPokemons(filtered);
+    }
+
+    const handlePagination = (pageNumber) => {
+      setCurrentPage(pageNumber);
+      getPokemons(pageNumber, (pageNumber-1)*pokemonsPerPage);
+    }
       
     const toggleChecked = (name)=>{
       let newCheckedPokemon;
