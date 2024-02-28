@@ -5,7 +5,7 @@ import Pagination from './Pagination';
 const PokemonList = ()=> {
     const [pokemons, setPokemons] = useState([]);
     const [filteredPokemons, setFilteredPokemons] = useState([]);
-    const [pokemonsPerPage, setPokemonsPerPage] = useState(10);
+    const pokemonsPerPage = 10;
     const [currentPage, setCurrentPage] = useState(1);
     const [checkedPokemons, setCheckedPokemons] = useState([]);
     const storedPokemons = JSON.parse(localStorage.getItem("pokemons"));
@@ -42,7 +42,7 @@ const PokemonList = ()=> {
     useEffect(()=>{
       if(storedPokemons?.length){
         setPokemons(storedPokemons);
-        updatePokemons(currentPage, storedPokemons)
+        // updatePokemons(currentPage, storedPokemons)
       
         setFilteredPokemons(updatePokemons(currentPage, storedPokemons));
       } else {
@@ -57,18 +57,18 @@ const PokemonList = ()=> {
     const onSearch = (e)=>{
       const searchTerm = e.target.value;
       if(!searchTerm) {
-        setFilteredPokemons(pokemons)
+        setFilteredPokemons(updatePokemons(currentPage, pokemons))
         return;
       }
       
-      const filtered = pokemons.filter(pokemon => pokemon.name.includes(searchTerm));
+      const filtered = pokemons.filter(pokemon => pokemon.name.toLowerCase().includes(searchTerm.toLowerCase()));
       setFilteredPokemons(filtered);
     }
 
     const handlePagination = (pageNumber) => {
       setCurrentPage(pageNumber);
       if(storedPokemons?.length){
-        updatePokemons(pageNumber, storedPokemons)
+        setFilteredPokemons(updatePokemons(pageNumber, storedPokemons))
       }
       getPokemons(pageNumber, (pageNumber-1)*pokemonsPerPage);
     }
@@ -89,7 +89,7 @@ const PokemonList = ()=> {
 
     return (
         <div>
-          <input type="text" onChange={onSearch} />
+          <input type="text" placeholder="Search..." onChange={onSearch} />
             {filteredPokemons.map(pokemon=> 
               <div key={pokemon.name}>
                 <SinglePokemon name={pokemon.name} toggleChecked={toggleChecked} /> 
