@@ -3,6 +3,7 @@ import SinglePokemon from './SinglePokemon';
 
 const PokemonList = ()=>{
     const [pokemons, setPokemons] = useState([]);
+    const [filteredPokemons, setFilteredPokemons] = useState([]);
 
     const getPokemons = (limit=20, offset=20) => {
         fetch(
@@ -12,6 +13,7 @@ const PokemonList = ()=>{
           .then(data => {
             console.log('data', data);
             setPokemons(data.results);
+            setFilteredPokemons(data.results);
             localStorage.setItem("pokemons", JSON.stringify(data.results));
           })
           .catch(err => {
@@ -24,15 +26,28 @@ const PokemonList = ()=>{
 
         if(storedPokemons.length){
           setPokemons(storedPokemons);
+          setFilteredPokemons(storedPokemons);
           return;
         }
 
         getPokemons();
       }, [])
 
+      const onSearch = (e)=>{
+        const searchTerm = e.target.value;
+        if(!searchTerm) {
+          setFilteredPokemons(pokemons)
+          return;
+        }
+        
+        const filtered = pokemons.filter(pokemon => pokemon.name.includes(searchTerm));
+        setFilteredPokemons(filtered);
+      }
+
     return (
         <div>
-            {pokemons.map(pokemon=> 
+          <input type="text" onChange={onSearch} />
+            {filteredPokemons.map(pokemon=> 
               <div key={pokemon.name}>
                 <SinglePokemon name={pokemon.name} /> 
               </div>
