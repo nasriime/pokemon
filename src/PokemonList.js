@@ -89,19 +89,19 @@ const PokemonList = ()=> {
 
     return (
         <div>
-          <input type="text" placeholder="Search..." onChange={onSearch} />
+          <input className="input-search" type="text" placeholder="Search..." onChange={onSearch} />
+          <ul>
             {filteredPokemons.map(pokemon=> 
-              <div key={pokemon.name}>
-                <SinglePokemon name={pokemon.name} toggleChecked={toggleChecked} /> 
-              </div>
+                <SinglePokemon key={pokemon.name} name={pokemon.name} toggleChecked={toggleChecked} /> 
               )}
+          </ul>
 
-            {filteredPokemons.length > 0 ? <Pagination
-              length={pokemons.length}
-              pokemonsPerPage={pokemonsPerPage}
-              currentPage={currentPage}
-              handlePagination={handlePagination}
-            />: <div>No results found</div>}
+          {filteredPokemons.length > 0 ? <Pagination
+            length={pokemons.length}
+            pokemonsPerPage={pokemonsPerPage}
+            currentPage={currentPage}
+            handlePagination={handlePagination}
+          />: <div>No results found</div>}
         </div>
     )
 }
