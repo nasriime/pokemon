@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import SinglePokemon from './SinglePokemon';
 import Pagination from './Pagination';
 
-const PokemonList = ()=>{
+const PokemonList = ()=> {
     const [pokemons, setPokemons] = useState([]);
     const [filteredPokemons, setFilteredPokemons] = useState([]);
     const [pokemonsPerPage, setPokemonsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const [checkedPokemons, setCheckedPokemons] = useState([]);
    
 
     const getPokemons = (currentPage, offset=0, limit=20) => {
@@ -31,14 +32,19 @@ const PokemonList = ()=>{
 
       useEffect(()=>{
         var storedPokemons = JSON.parse(localStorage.getItem("pokemons"));
+        var storedCheckedPokemons = JSON.parse(localStorage.getItem("checkedPokemons"));
 
         if(storedPokemons.length){
           setPokemons(storedPokemons);
           setFilteredPokemons(storedPokemons);
-          return;
+        } else {
+          getPokemons(currentPage);
         }
 
-        getPokemons(currentPage);
+        if(storedCheckedPokemons?.length){
+          setCheckedPokemons(storedCheckedPokemons);
+        } 
+
       }, [])
 
       const onSearch = (e)=>{
@@ -57,12 +63,27 @@ const PokemonList = ()=>{
         getPokemons(pageNumber, (pageNumber-1)*pokemonsPerPage);
       };
 
+      
+    const toggleChecked = (name)=>{
+      let newCheckedPokemon;
+      if(checkedPokemons[name]){
+        newCheckedPokemon = checkedPokemons.filter(pokemon=> pokemon.name !== name);
+        setCheckedPokemons(newCheckedPokemon);
+        localStorage.setItem("checkedPokemons", JSON.stringify(newCheckedPokemon));
+      }else{
+        newCheckedPokemon = [...checkedPokemons, name];
+        setCheckedPokemons(newCheckedPokemon);
+        localStorage.setItem("checkedPokemons", JSON.stringify(newCheckedPokemon));
+      }
+    }
+
+
     return (
         <div>
           <input type="text" onChange={onSearch} />
             {filteredPokemons.map(pokemon=> 
               <div key={pokemon.name}>
-                <SinglePokemon name={pokemon.name} /> 
+                <SinglePokemon name={pokemon.name} toggleChecked={toggleChecked} /> 
               </div>
               )}
 

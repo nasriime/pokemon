@@ -1,8 +1,9 @@
-const SinglePokemon = ({name})=>{
+const SinglePokemon = ({name, toggleChecked})=>{
+    const checked = JSON.parse(localStorage.getItem("checkedPokemons"));
 
     return (
         <div>
-            <input type="checkbox" /> 
+            <input type="checkbox" defaultChecked={checked?.includes(name)} onClick={()=>toggleChecked(name)} /> 
             < span>{name}</span>
         </div>
     )
